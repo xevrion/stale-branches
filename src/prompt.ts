@@ -1,7 +1,7 @@
-import checkbox, { Separator } from "@inquirer/checkbox";
+import checkbox from "@inquirer/checkbox";
 import chalk from "chalk";
 import type { BranchInfo } from "./types.js";
-import { formatAge, truncate } from "./format.js";
+import { truncate } from "./format.js";
 
 export type Choice = {
   name: string;

@@ -1,0 +1,38 @@
+name: Feature Request
+description: Suggest a new feature or improvement for stale-branches
+labels: ["enhancement"]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting an improvement. Please fill out the sections below to help us understand the request.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem description
+      description: What problem are you trying to solve? What's the pain point?
+      placeholder: "When I run stale-branches, I find it frustrating that..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: Describe the feature you'd like. Include CLI flag names or UI changes if applicable.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Are there other ways to solve this? What are the trade-offs?
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Any other context, screenshots, or examples that would help.

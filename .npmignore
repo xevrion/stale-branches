@@ -14,6 +14,8 @@ vitest.config*
 # Docs / meta (not needed at runtime)
 CLAUDE.md
 SPEC.md
+CONTRIBUTING.md
+SECURITY.md
 
 # CI / GitHub
 .github/

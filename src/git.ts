@@ -1,6 +1,6 @@
 import { spawnSync } from "child_process";
 
-const BRANCH_NAME_RE = /^[a-zA-Z0-9/_.\-]+$/;
+const BRANCH_NAME_RE = /^[a-zA-Z0-9/_.-]+$/;
 
 // Sanitize branch names — defense in depth even though we don't use a shell
 export function sanitizeBranch(branch: string): string {

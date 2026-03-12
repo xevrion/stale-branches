@@ -30,6 +30,9 @@ jobs:
       - name: Verify dependency integrity
         run: npm audit signatures
 
+      - name: Lint
+        run: npm run lint
+
       - name: Build
         run: npm run build
 

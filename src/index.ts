@@ -102,10 +102,7 @@ async function main(): Promise<void> {
 
   if (opts.dryRun) {
     console.log(chalk.cyan("  Dry run — branches that would be deleted:"));
-    for (const b of filtered.filter((_, i) => {
-      // In dry-run we show all; user sees the full list
-      return true;
-    })) {
+    for (const b of filtered) {
       const remoteNote = b.hasRemote ? " + remote" : "";
       console.log(
         `  ${chalk.bold(b.name)}${chalk.dim(` (${b.age}${remoteNote})`)}`
@@ -124,9 +121,9 @@ async function main(): Promise<void> {
     process.exit(0);
   }
 
-  const selectedInfos = selected.map(
-    (name) => infos.find((b) => b.name === name)!
-  );
+  const selectedInfos = selected
+    .map((name) => infos.find((b) => b.name === name))
+    .filter((b): b is NonNullable<typeof b> => b !== undefined);
 
   const unmerged = selectedInfos.filter((b) => !b.isMerged);
 
