@@ -1,8 +1,8 @@
-import { execSync } from "child_process";
+import { spawnSync } from "child_process";
 
 const BRANCH_NAME_RE = /^[a-zA-Z0-9/_.\-]+$/;
 
-// Sanitize branch names to prevent command injection
+// Sanitize branch names — defense in depth even though we don't use a shell
 export function sanitizeBranch(branch: string): string {
   if (!BRANCH_NAME_RE.test(branch)) {
     throw new Error(`Invalid branch name: ${branch}`);
@@ -10,28 +10,33 @@ export function sanitizeBranch(branch: string): string {
   return branch;
 }
 
-function exec(cmd: string): string {
-  return execSync(cmd, { encoding: "utf8" }).trim();
+function run(args: string[]): string {
+  const result = spawnSync("git", args, { encoding: "utf8" });
+  if (result.status !== 0) {
+    const msg = result.stderr?.trim() || `git ${args[0]} failed`;
+    throw new Error(`Command failed: git ${args.join(" ")}\n${msg}`);
+  }
+  return result.stdout.trim();
 }
 
-function execSafe(cmd: string): string | null {
+function runSafe(args: string[]): string | null {
   try {
-    return exec(cmd);
+    return run(args);
   } catch {
     return null;
   }
 }
 
 export function getCurrentBranch(): string {
-  return exec("git rev-parse --abbrev-ref HEAD");
+  return run(["rev-parse", "--abbrev-ref", "HEAD"]);
 }
 
 export function detectDefaultBranch(): string {
-  const result = execSafe("git symbolic-ref refs/remotes/origin/HEAD --short");
+  const result = runSafe(["symbolic-ref", "refs/remotes/origin/HEAD", "--short"]);
   if (result) {
     return result.replace("origin/", "");
   }
-  const branches = execSafe("git branch --format=%(refname:short)") ?? "";
+  const branches = runSafe(["branch", "--format=%(refname:short)"]) ?? "";
   const list = branches.split("\n").map((b) => b.trim());
   if (list.includes("main")) return "main";
   if (list.includes("master")) return "master";
@@ -39,7 +44,7 @@ export function detectDefaultBranch(): string {
 }
 
 export function listBranches(): string[] {
-  const output = exec("git branch --format=%(refname:short)");
+  const output = run(["branch", "--format=%(refname:short)"]);
   return output
     .split("\n")
     .map((b) => b.trim())
@@ -52,25 +57,20 @@ export function getMergeStatus(
 ): boolean {
   const safe = sanitizeBranch(branch);
   const safeDefault = sanitizeBranch(defaultBranch);
-  try {
-    execSync(`git merge-base --is-ancestor ${safe} ${safeDefault}`, {
-      encoding: "utf8",
-      stdio: "ignore",
-    });
-    return true;
-  } catch {
-    return false;
-  }
+  const result = spawnSync("git", ["merge-base", "--is-ancestor", safe, safeDefault], {
+    encoding: "utf8",
+  });
+  return result.status === 0;
 }
 
 export function getLastCommit(branch: string): string {
   const safe = sanitizeBranch(branch);
-  return execSafe(`git log -1 --format=%s ${safe}`) ?? "(no commits)";
+  return runSafe(["log", "-1", "--format=%s", safe]) ?? "(no commits)";
 }
 
 export function getAgeDays(branch: string): number {
   const safe = sanitizeBranch(branch);
-  const timestamp = execSafe(`git log -1 --format=%ct ${safe}`);
+  const timestamp = runSafe(["log", "-1", "--format=%ct", safe]);
   if (!timestamp) return 0;
   const seconds = parseInt(timestamp, 10);
   if (isNaN(seconds)) return 0;
@@ -80,17 +80,16 @@ export function getAgeDays(branch: string): number {
 
 export function hasRemote(branch: string): boolean {
   const safe = sanitizeBranch(branch);
-  const result = execSafe(`git ls-remote --heads origin ${safe}`);
+  const result = runSafe(["ls-remote", "--heads", "origin", safe]);
   return result !== null && result.length > 0;
 }
 
 export function deleteBranch(branch: string, force: boolean): void {
   const safe = sanitizeBranch(branch);
-  const flag = force ? "-D" : "-d";
-  exec(`git branch ${flag} ${safe}`);
+  run(["branch", force ? "-D" : "-d", safe]);
 }
 
 export function deleteRemoteBranch(branch: string): void {
   const safe = sanitizeBranch(branch);
-  exec(`git push origin --delete ${safe}`);
+  run(["push", "origin", "--delete", safe]);
 }

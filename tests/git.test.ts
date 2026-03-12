@@ -1,18 +1,24 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { execSync } from "child_process";
+import { spawnSync } from "child_process";
 
 vi.mock("child_process", () => ({
-  execSync: vi.fn(),
+  spawnSync: vi.fn(),
 }));
 
-const mockedExecSync = vi.mocked(execSync);
+const mockedSpawnSync = vi.mocked(spawnSync);
 
-// Reset modules between test groups so mocks are fresh
+function mockSuccess(stdout: string) {
+  mockedSpawnSync.mockReturnValueOnce({ status: 0, stdout, stderr: "" } as any);
+}
+
+function mockFailure(stderr = "failed") {
+  mockedSpawnSync.mockReturnValueOnce({ status: 1, stdout: "", stderr } as any);
+}
+
 beforeEach(() => {
   vi.resetAllMocks();
 });
 
-// Import after mocking
 const {
   sanitizeBranch,
   getCurrentBranch,
@@ -44,56 +50,56 @@ describe("sanitizeBranch", () => {
 
 describe("getCurrentBranch", () => {
   it("returns current branch name", () => {
-    mockedExecSync.mockReturnValueOnce("main\n" as any);
+    mockSuccess("main\n");
     expect(getCurrentBranch()).toBe("main");
   });
 });
 
 describe("detectDefaultBranch", () => {
   it("returns branch from symbolic-ref when available", () => {
-    mockedExecSync.mockReturnValueOnce("origin/main\n" as any);
+    mockSuccess("origin/main\n");
     expect(detectDefaultBranch()).toBe("main");
   });
 
   it("falls back to main if symbolic-ref fails but main exists", () => {
-    mockedExecSync.mockImplementationOnce(() => { throw new Error("failed"); });
-    mockedExecSync.mockReturnValueOnce("main\nfeature/foo\n" as any);
+    mockFailure();
+    mockSuccess("main\nfeature/foo\n");
     expect(detectDefaultBranch()).toBe("main");
   });
 
   it("falls back to master if only master exists", () => {
-    mockedExecSync.mockImplementationOnce(() => { throw new Error("failed"); });
-    mockedExecSync.mockReturnValueOnce("master\nfeature/foo\n" as any);
+    mockFailure();
+    mockSuccess("master\nfeature/foo\n");
     expect(detectDefaultBranch()).toBe("master");
   });
 
   it("defaults to main if neither main nor master found", () => {
-    mockedExecSync.mockImplementationOnce(() => { throw new Error("failed"); });
-    mockedExecSync.mockReturnValueOnce("feature/foo\n" as any);
+    mockFailure();
+    mockSuccess("feature/foo\n");
     expect(detectDefaultBranch()).toBe("main");
   });
 });
 
 describe("listBranches", () => {
   it("returns array of branch names", () => {
-    mockedExecSync.mockReturnValueOnce("feature/foo\nfix/bar\nchore/baz\n" as any);
+    mockSuccess("feature/foo\nfix/bar\nchore/baz\n");
     expect(listBranches()).toEqual(["feature/foo", "fix/bar", "chore/baz"]);
   });
 
   it("filters empty lines", () => {
-    mockedExecSync.mockReturnValueOnce("feature/foo\n\nfix/bar\n" as any);
+    mockSuccess("feature/foo\n\nfix/bar\n");
     expect(listBranches()).toEqual(["feature/foo", "fix/bar"]);
   });
 });
 
 describe("getMergeStatus", () => {
   it("returns true when branch is merged", () => {
-    mockedExecSync.mockReturnValueOnce("" as any);
+    mockedSpawnSync.mockReturnValueOnce({ status: 0, stdout: "", stderr: "" } as any);
     expect(getMergeStatus("feature/old", "main")).toBe(true);
   });
 
   it("returns false when branch is not merged", () => {
-    mockedExecSync.mockImplementationOnce(() => { throw new Error("not ancestor"); });
+    mockedSpawnSync.mockReturnValueOnce({ status: 1, stdout: "", stderr: "" } as any);
     expect(getMergeStatus("feature/wip", "main")).toBe(false);
   });
 
@@ -104,12 +110,12 @@ describe("getMergeStatus", () => {
 
 describe("getLastCommit", () => {
   it("returns commit message", () => {
-    mockedExecSync.mockReturnValueOnce("fix auth redirect\n" as any);
+    mockSuccess("fix auth redirect\n");
     expect(getLastCommit("feature/login")).toBe("fix auth redirect");
   });
 
   it("returns fallback on error", () => {
-    mockedExecSync.mockImplementationOnce(() => { throw new Error("failed"); });
+    mockFailure();
     expect(getLastCommit("feature/empty")).toBe("(no commits)");
   });
 });
@@ -118,55 +124,55 @@ describe("getAgeDays", () => {
   it("returns days since last commit", () => {
     const nowSeconds = Math.floor(Date.now() / 1000);
     const tenDaysAgo = String(nowSeconds - 10 * 86400);
-    mockedExecSync.mockReturnValueOnce((tenDaysAgo + "\n") as any);
+    mockSuccess(tenDaysAgo + "\n");
     expect(getAgeDays("feature/old")).toBe(10);
   });
 
   it("returns 0 when exec fails", () => {
-    mockedExecSync.mockImplementationOnce(() => { throw new Error("failed"); });
+    mockFailure();
     expect(getAgeDays("feature/empty")).toBe(0);
   });
 
   it("returns 0 for non-numeric timestamp", () => {
-    mockedExecSync.mockReturnValueOnce("notanumber\n" as any);
+    mockSuccess("notanumber\n");
     expect(getAgeDays("feature/bad")).toBe(0);
   });
 });
 
 describe("hasRemote", () => {
   it("returns true when remote ref exists", () => {
-    mockedExecSync.mockReturnValueOnce(
-      "abc123\trefs/heads/feature/foo\n" as any
-    );
+    mockSuccess("abc123\trefs/heads/feature/foo\n");
     expect(hasRemote("feature/foo")).toBe(true);
   });
 
   it("returns false when remote ref is empty", () => {
-    mockedExecSync.mockReturnValueOnce("" as any);
+    mockSuccess("");
     expect(hasRemote("feature/local-only")).toBe(false);
   });
 
   it("returns false on exec error", () => {
-    mockedExecSync.mockImplementationOnce(() => { throw new Error("failed"); });
+    mockFailure();
     expect(hasRemote("feature/nope")).toBe(false);
   });
 });
 
 describe("deleteBranch", () => {
   it("calls git branch -d for merged branch", () => {
-    mockedExecSync.mockReturnValueOnce("" as any);
+    mockSuccess("");
     deleteBranch("feature/done", false);
-    expect(mockedExecSync).toHaveBeenCalledWith(
-      "git branch -d feature/done",
+    expect(mockedSpawnSync).toHaveBeenCalledWith(
+      "git",
+      ["branch", "-d", "feature/done"],
       expect.any(Object)
     );
   });
 
   it("calls git branch -D for force delete", () => {
-    mockedExecSync.mockReturnValueOnce("" as any);
+    mockSuccess("");
     deleteBranch("feature/wip", true);
-    expect(mockedExecSync).toHaveBeenCalledWith(
-      "git branch -D feature/wip",
+    expect(mockedSpawnSync).toHaveBeenCalledWith(
+      "git",
+      ["branch", "-D", "feature/wip"],
       expect.any(Object)
     );
   });
@@ -178,10 +184,11 @@ describe("deleteBranch", () => {
 
 describe("deleteRemoteBranch", () => {
   it("calls git push origin --delete", () => {
-    mockedExecSync.mockReturnValueOnce("" as any);
+    mockSuccess("");
     deleteRemoteBranch("feature/done");
-    expect(mockedExecSync).toHaveBeenCalledWith(
-      "git push origin --delete feature/done",
+    expect(mockedSpawnSync).toHaveBeenCalledWith(
+      "git",
+      ["push", "origin", "--delete", "feature/done"],
       expect.any(Object)
     );
   });
