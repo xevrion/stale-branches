@@ -1,5 +1,10 @@
 # stale-branches
 
+[![npm version](https://img.shields.io/npm/v/stale-branches)](https://www.npmjs.com/package/stale-branches)
+[![npm downloads](https://img.shields.io/npm/dm/stale-branches)](https://www.npmjs.com/package/stale-branches)
+[![CI](https://github.com/xevrion/stale-branches/actions/workflows/ci.yml/badge.svg)](https://github.com/xevrion/stale-branches/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+
 Interactive CLI to list and delete stale git branches. Shows each branch's age, merge status, and last commit — then lets you delete them all in one session, local and remote.
 
 ```
