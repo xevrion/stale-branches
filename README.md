@@ -7,6 +7,17 @@
 
 Interactive CLI to list and delete stale git branches. Shows each branch's age, merge status, and last commit — then lets you delete them all in one session, local and remote.
 
+→ [xevrion.github.io/stale-branches](https://xevrion.github.io/stale-branches)
+
+## Features
+
+- **Branch table** — age, merge status, last commit shown before the interactive prompt
+- **Merged pre-selected** — safe defaults; unmerged branches shown in red and require an extra confirmation
+- **Local + remote** — cleans up both in one pass, asks per-branch or use `--remote` to skip prompts
+- **Protected branches** — never touches `main`, `master`, `develop`, `dev`, `staging`, `production`, or your current branch
+- **Command injection prevention** — branch names are sanitized before any `git` call
+- **--dry-run** — preview exactly what would be deleted without touching anything
+
 ```
 npx stale-branches
 ```

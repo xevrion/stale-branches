@@ -17,6 +17,9 @@ SPEC.md
 CONTRIBUTING.md
 SECURITY.md
 
+# Website
+website/
+
 # CI / GitHub
 .github/
 

@@ -36,7 +36,7 @@
     "type": "git",
     "url": "git+https://github.com/xevrion/stale-branches.git"
   },
-  "homepage": "https://github.com/xevrion/stale-branches#readme",
+  "homepage": "https://xevrion.github.io/stale-branches",
   "bugs": {
     "url": "https://github.com/xevrion/stale-branches/issues"
   },
