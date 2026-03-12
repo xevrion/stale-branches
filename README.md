@@ -80,7 +80,7 @@ stale-branches --remote
 
 ## Requirements
 
-- Node.js >= 18
+- Node.js >= 20
 - Git
 
 ## License
