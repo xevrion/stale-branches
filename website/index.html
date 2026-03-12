@@ -208,7 +208,7 @@
 
     <div class="version anim anim-1">
       <span class="version-dot"></span>
-      v1.0.6 is out
+      <span id="version">v1.0.6 is out</span>
     </div>
 
     <div class="headline anim anim-2">
@@ -242,6 +242,11 @@
   </main>
 
   <script>
+    fetch('https://registry.npmjs.org/stale-branches/latest')
+      .then(r => r.json())
+      .then(d => { document.getElementById('version').textContent = `v${d.version} is out`; })
+      .catch(() => {});
+
     const btn = document.getElementById('copyBtn');
     const icon = document.getElementById('copyIcon');
 
