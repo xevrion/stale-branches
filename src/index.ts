@@ -149,22 +149,25 @@ async function main(): Promise<void> {
     }
   }
 
+  // Ask once about remotes for all selected branches that have one
+  const withRemote = selectedInfos.filter((b) => b.hasRemote);
+  let deleteRemotes = opts.remote;
+
+  if (!opts.remote && withRemote.length > 0) {
+    const names = withRemote.map((b) => chalk.bold(b.name)).join(", ");
+    deleteRemotes = await confirm({
+      message: `Also delete remote counterparts for: ${names}?`,
+      default: false,
+    });
+  }
+
   console.log();
 
   for (const branch of selectedInfos) {
     try {
-      let deleteRemote = opts.remote && branch.hasRemote;
-
-      if (!opts.remote && branch.hasRemote) {
-        deleteRemote = await confirm({
-          message: `  Also delete remote branch origin/${branch.name}?`,
-          default: false,
-        });
-      }
-
       deleteBranch(branch.name, !branch.isMerged);
 
-      if (deleteRemote) {
+      if (deleteRemotes && branch.hasRemote) {
         deleteRemoteBranch(branch.name);
         console.log(
           chalk.green(`  ✓ Deleted ${branch.name}`) + chalk.dim(" (local + remote)")

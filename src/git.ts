@@ -80,8 +80,9 @@ export function getAgeDays(branch: string): number {
 
 export function hasRemote(branch: string): boolean {
   const safe = sanitizeBranch(branch);
-  const result = runSafe(["ls-remote", "--heads", "origin", safe]);
-  return result !== null && result.length > 0;
+  // Check local tracking refs — no network call needed
+  const result = runSafe(["branch", "-r", "--list", `origin/${safe}`]);
+  return result !== null && result.trim().length > 0;
 }
 
 export function deleteBranch(branch: string, force: boolean): void {

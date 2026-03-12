@@ -140,12 +140,12 @@ describe("getAgeDays", () => {
 });
 
 describe("hasRemote", () => {
-  it("returns true when remote ref exists", () => {
-    mockSuccess("abc123\trefs/heads/feature/foo\n");
+  it("returns true when tracking ref exists", () => {
+    mockSuccess("  origin/feature/foo\n");
     expect(hasRemote("feature/foo")).toBe(true);
   });
 
-  it("returns false when remote ref is empty", () => {
+  it("returns false when tracking ref is empty", () => {
     mockSuccess("");
     expect(hasRemote("feature/local-only")).toBe(false);
   });
@@ -153,6 +153,16 @@ describe("hasRemote", () => {
   it("returns false on exec error", () => {
     mockFailure();
     expect(hasRemote("feature/nope")).toBe(false);
+  });
+
+  it("calls git branch -r --list with correct ref pattern", () => {
+    mockSuccess("  origin/feature/foo\n");
+    hasRemote("feature/foo");
+    expect(mockedSpawnSync).toHaveBeenCalledWith(
+      "git",
+      ["branch", "-r", "--list", "origin/feature/foo"],
+      expect.any(Object)
+    );
   });
 });
 
