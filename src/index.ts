@@ -165,7 +165,11 @@ async function main(): Promise<void> {
 
   for (const branch of selectedInfos) {
     try {
-      deleteBranch(branch.name, !branch.isMerged);
+      // Always force-delete (-D) since we've already done our own merge check
+      // and confirmation. git branch -d checks reachability from HEAD (current
+      // branch), not from the default branch, which causes false "not fully
+      // merged" errors when HEAD != defaultBranch.
+      deleteBranch(branch.name, true);
 
       if (deleteRemotes && branch.hasRemote) {
         deleteRemoteBranch(branch.name);
@@ -190,6 +194,11 @@ async function main(): Promise<void> {
 }
 
 main().catch((err: unknown) => {
+  // Inquirer throws when user presses Ctrl+C or q — exit cleanly
+  if (err instanceof Error && err.message.includes("force closed")) {
+    console.log(chalk.yellow("\n  Exiting.\n"));
+    process.exit(0);
+  }
   const message = err instanceof Error ? err.message : String(err);
   console.error(chalk.red(`\n  Error: ${message}\n`));
   process.exit(1);

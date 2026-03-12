@@ -11,20 +11,25 @@ npx stale-branches
 ```
   Fetching branch info...
 
-  Branch                          Age         Status       Last Commit
-  ────────────────────────────────────────────────────────────────────────────────────
-  feature/old-login               47 days     merged       fix auth redirect
-  chore/update-deps               61 days     merged       bump lodash to 4.18
-  experiment/dark-mode            23 days     unmerged     wip: toggle styles
+Branch                          Age         Status       Last Commit
+───────────────────────────────────────────────────────────────────────────────────────────────────
+spotify-fix                     2 months    merged       fix: fixed the position of the status text
+test/handDrawnAnimations        8 days      merged       feat: add handwritten hint annotations on…
+test/postHandwritingData        7 days      merged       fix: improve mobile menu backdrop opacity…
+github-calendar                 2 months    unmerged     feat: added github calendar but worst sty…
 
-  Space to select, A to select all, Enter to confirm
-  ❯ ◉ feature/old-login
-    ◉ chore/update-deps
-    ◯ experiment/dark-mode
+? Select branches to delete (Space to toggle, A to select all, Enter to confirm):
+❯◉ spotify-fix                     2 months    merged      fix: fixed the position of the status t…
+ ◉ test/handDrawnAnimations        8 days      merged      feat: add handwritten hint annotations …
+ ◉ test/postHandwritingData        7 days      merged      fix: improve mobile menu backdrop opaci…
+ ◯ github-calendar                 2 months    unmerged    feat: added github calendar but worst s…
 
-  ✓ Deleted feature/old-login (local + remote)
-  ✓ Deleted chore/update-deps (local)
-  ✗ experiment/dark-mode — skipped
+↑↓ navigate • space select • a all • i invert • ctrl+c exit • ⏎ submit
+
+? Also delete remote counterparts for: test/handDrawnAnimations, test/postHandwritingData? Yes
+
+  ✓ Deleted test/handDrawnAnimations (local + remote)
+  ✓ Deleted test/postHandwritingData (local + remote)
 ```
 
 ## Install
@@ -52,7 +57,7 @@ stale-branches --days 30
 # Preview what would be deleted without actually deleting
 stale-branches --dry-run
 
-# Delete remote branches without asking per-branch
+# Delete remote branches without asking
 stale-branches --remote
 ```
 
@@ -63,14 +68,14 @@ stale-branches --remote
 | `--merged` | Show only merged branches |
 | `--dry-run` | Print what would be deleted, don't delete anything |
 | `--days <n>` | Only show branches older than n days (default: 0) |
-| `--remote` | Delete remote branches automatically without per-branch confirmation |
+| `--remote` | Delete remote branches automatically without confirmation |
 
 ## Behaviour
 
 - **Protected branches** — never shown or touched: `main`, `master`, `develop`, `dev`, `staging`, `production`, and your currently checked-out branch
 - **Merged branches** — pre-selected by default (safe to delete)
 - **Unmerged branches** — shown in red, not pre-selected, require an extra confirmation prompt
-- **Remote deletion** — asked per branch unless `--remote` is passed
+- **Remote deletion** — asked once for all selected branches that have remotes, unless `--remote` is passed
 - **Branch names** — sanitized before passing to git to prevent command injection
 
 ## Requirements
