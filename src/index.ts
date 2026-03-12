@@ -191,8 +191,11 @@ async function main(): Promise<void> {
 }
 
 main().catch((err: unknown) => {
-  // Inquirer throws when user presses Ctrl+C or q — exit cleanly
-  if (err instanceof Error && err.message.includes("force closed")) {
+  // Inquirer throws when user presses Ctrl+C or Q — exit cleanly
+  if (
+    err instanceof Error &&
+    (err.message.includes("force closed") || err.name === "AbortError")
+  ) {
     console.log(chalk.yellow("\n  Exiting.\n"));
     process.exit(0);
   }
