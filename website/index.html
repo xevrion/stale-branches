@@ -242,11 +242,6 @@
   </main>
 
   <script>
-    fetch('https://registry.npmjs.org/stale-branches/latest')
-      .then(r => r.json())
-      .then(d => { document.getElementById('version').textContent = `v${d.version} is out`; })
-      .catch(() => {});
-
     const btn = document.getElementById('copyBtn');
     const icon = document.getElementById('copyIcon');
 
