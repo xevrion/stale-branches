@@ -1,0 +1,35 @@
+# Source — consumers get the compiled dist/, not the raw TypeScript
+src/
+
+# Tests
+tests/
+
+# Config / tooling
+tsconfig.json
+.eslintrc*
+eslint.config*
+vitest.config*
+.prettierrc*
+
+# Docs / meta (not needed at runtime)
+CLAUDE.md
+SPEC.md
+
+# CI / GitHub
+.github/
+
+# Logs & OS
+*.log
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# Coverage
+coverage/
+
+# Environment
+.env
+.env.*

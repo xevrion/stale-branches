@@ -1,23 +1,47 @@
 {
   "name": "stale-branches",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "vitest run",
-    "build": "tsup src/index.ts --format esm",
-    "lint": "eslint src/**/*.ts"
+  "description": "Interactive CLI to list and delete stale git branches with age, merge status, and one-shot local+remote cleanup",
+  "type": "module",
+  "main": "./dist/index.js",
+  "bin": {
+    "stale-branches": "./dist/index.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^8.57.0",
-    "@typescript-eslint/parser": "^8.57.0",
-    "eslint": "^10.0.3",
-    "tsup": "^8.5.1",
-    "typescript": "^5.9.3",
-    "vitest": "^4.0.18"
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm",
+    "test": "vitest run",
+    "lint": "eslint src/**/*.ts",
+    "prepublishOnly": "npm run build && npm test"
+  },
+  "keywords": [
+    "git",
+    "branches",
+    "stale",
+    "cleanup",
+    "cli",
+    "interactive",
+    "delete-branches",
+    "git-cleanup"
+  ],
+  "author": {
+    "name": "Yash Bavadiya",
+    "email": "krbavadiya11@gmail.com",
+    "url": "https://github.com/xevrion"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xevrion/stale-branches.git"
+  },
+  "homepage": "https://github.com/xevrion/stale-branches#readme",
+  "bugs": {
+    "url": "https://github.com/xevrion/stale-branches/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   },
   "dependencies": {
     "@inquirer/checkbox": "^5.1.0",
@@ -25,8 +49,12 @@
     "chalk": "^5.6.2",
     "commander": "^14.0.3"
   },
-  "type": "module",
-  "bin": {
-    "stale-branches": "./dist/index.js"
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.57.0",
+    "@typescript-eslint/parser": "^8.57.0",
+    "eslint": "^10.0.3",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18"
   }
 }
