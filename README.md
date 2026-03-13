@@ -24,29 +24,7 @@ npx stale-branches
 
 ## What it looks like
 
-```
-  Fetching branch info...
-
-Branch                          Age         Status       Last Commit
-───────────────────────────────────────────────────────────────────────────────────────────────────
-spotify-fix                     2 months    merged       fix: fixed the position of the status text
-test/handDrawnAnimations        8 days      merged       feat: add handwritten hint annotations on…
-test/postHandwritingData        7 days      merged       fix: improve mobile menu backdrop opacity…
-github-calendar                 2 months    unmerged     feat: added github calendar but worst sty…
-
-? Select branches to delete (Space to toggle, A to select all, Enter to confirm, Q to quit):
-❯◉ spotify-fix                     2 months    merged      fix: fixed the position of the status t…
- ◉ test/handDrawnAnimations        8 days      merged      feat: add handwritten hint annotations …
- ◉ test/postHandwritingData        7 days      merged      fix: improve mobile menu backdrop opaci…
- ◯ github-calendar                 2 months    unmerged    feat: added github calendar but worst s…
-
-↑↓ navigate • space select • a all • i invert • q/ctrl+c exit • ⏎ submit
-
-? Also delete remote counterparts for: test/handDrawnAnimations, test/postHandwritingData? Yes
-
-  ✓ Deleted test/handDrawnAnimations (local + remote)
-  ✓ Deleted test/postHandwritingData (local + remote)
-```
+![demo](demo.gif)
 
 ## Install
 
