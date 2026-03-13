@@ -1,6 +1,6 @@
 {
   "name": "stale-branches",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Interactive CLI to list and delete stale git branches with age, merge status, and one-shot local+remote cleanup",
   "type": "module",
   "main": "./dist/index.js",
