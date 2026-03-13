@@ -9,6 +9,8 @@ Interactive CLI to list and delete stale git branches. Shows each branch's age, 
 
 → [xevrion.github.io/stale-branches](https://xevrion.github.io/stale-branches)
 
+![demo](demo.gif)
+
 ## Features
 
 - **Branch table** — age, merge status, last commit shown before the interactive prompt
@@ -21,10 +23,6 @@ Interactive CLI to list and delete stale git branches. Shows each branch's age, 
 ```
 npx stale-branches
 ```
-
-## What it looks like
-
-![demo](demo.gif)
 
 ## Install
 
